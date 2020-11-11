@@ -1,7 +1,15 @@
 # RuntimeMeshLoader
-RuntimeMeshLoader for UE4  
-  
-Use this plugin with ProceduralMeshComponent, you can load mesh with Blueprint in runtime,support relative and absolute Path.  
+RuntimeMeshLoader for UE4.25
+
+Use this plugin with ProceduralMeshComponent and UStaticMeshComponent, you can load mesh with Blueprint in runtime,support relative and absolute Path.  
+
+dependancy Library:
+
+Assimp 5.1.X
+
+Support Platform
+Mac
+Windows
 
 Supported file formats  
 3DS  
