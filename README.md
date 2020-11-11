@@ -1,17 +1,17 @@
-# RuntimeMeshLoader
-RuntimeMeshLoader for UE4.25
+# RuntimeMeshLoaderExtend
 
-Use this plugin with ProceduralMeshComponent and UStaticMeshComponent, you can load mesh with Blueprint in runtime,support relative and absolute Path.  
+RuntimeMeshLoaderExtend is extension for RuntimeMeshLoader about UE4.25
 
-dependancy Library:
+Use this plugin with ProceduralMeshComponent and UStaticMeshComponent, you can load mesh with Blueprint or c++ in runtime,support relative and absolute Path.  
 
+Dependancy Library:
 Assimp 5.1.X
 
 Support Platform
 Mac
 Windows
 
-Supported file formats  
+Support file formats  
 3DS  
 BLEND (Blender)  
 DAE/Collada  
