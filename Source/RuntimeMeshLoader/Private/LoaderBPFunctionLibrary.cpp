@@ -20,8 +20,33 @@
 
 
 
-void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result)
+void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,const FTransform &tran = FTransform())
 {
+	//transform...
+	aiMatrix4x4 TranMat,tempMat;
+	
+	
+	bool bTran = false;
+	if ( !tran.GetLocation().Equals(FVector{ 0.0f }, 0.01f ) )
+	{
+		bTran = true;
+		TranMat = TranMat.Translation(aiVector3D{ tran.GetLocation().X, tran.GetLocation().Y, tran.GetLocation().Z }, tempMat);
+	}
+
+	if ( !tran.GetScale3D().Equals( FVector{ 0.0f }, 0.01f ) )
+	{
+		bTran = true;
+		TranMat = TranMat.Scaling(aiVector3D{ tran.GetScale3D().X, tran.GetScale3D().Y, tran.GetScale3D().Z }, tempMat);
+	}
+
+	if ( !tran.GetRotation().Equals( FRotator{ 0.0f }.Quaternion(), 0.01f ) )
+	{
+		bTran = true;
+		TranMat = TranMat.RotationX( PI / 180.f * tran.GetRotation().Rotator().Roll	, tempMat  );
+		TranMat = TranMat.RotationY( PI / 180.f * tran.GetRotation().Rotator().Yaw	, tempMat  );
+		TranMat = TranMat.RotationZ( PI / 180.f * tran.GetRotation().Rotator().Pitch	, tempMat  );
+	}
+
 	for (uint32 i = 0; i < node->mNumMeshes; i++)
 	{
 		std::string TestString = node->mName.C_Str();
@@ -32,19 +57,16 @@ void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result)
 
 		int meshidx = *node->mMeshes;
 
-		aiMesh *mesh  = scene->mMeshes	[ meshidx ];
-		FMeshInfo &mi = result.meshInfo	[ meshidx ];
-		
-		//transform...
-		//aiMatrix4x4 axiosMat;
-		//aiMatrix4x4::RotationX(PI / 2, axiosMat);
-		aiMatrix4x4 tempTrans = node->mTransformation  ;//* axiosMat;
-		
-		// aiMatrix4x4::Rotation();
-		// aiMatrix4x4::RotationX(-90.0f, )
-		FMatrix tempMatrix;
+		aiMesh	  *mesh = scene->mMeshes  [ meshidx ];
+		FMeshInfo &mi	= result.meshInfo [ meshidx ];
+		aiMatrix4x4 tempTrans = node->mTransformation;
+		//如果变换
+		if (bTran)
+		{
+			tempTrans = tempTrans * TranMat;
+		}
 
-		// FMatrix tempMater
+		FMatrix tempMatrix;
 
 		// e.g
 		// _______________
@@ -143,14 +165,14 @@ void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result)
 	}
 }
 
-void FindMesh(const aiScene* scene, aiNode* node, FReturnedData& retdata)
+void FindMesh(const aiScene* scene, aiNode* node, FReturnedData& retdata, const  FTransform &tran)
 {
 	FindMeshInfo(scene, node, retdata);
 
 	// tree node 
-	for (uint32 m = 0; m < node->mNumChildren; ++m)
+	for ( uint32 m = 0; m < node->mNumChildren; ++m )
 	{
-		FindMesh(scene, node->mChildren[m], retdata);
+		FindMesh(scene, node->mChildren[m], retdata, tran);
 	}
 }
 
@@ -481,7 +503,7 @@ FMeshDescription BuildMeshDescriptionExtend( FReturnedData& MeshsData /* UProced
 #pragma endregion copy
 
 
-FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, EPathType type)
+FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, EPathType type, const FTransform& tran )
 {
 	FReturnedData result;
 	result.bSuccess = false;
@@ -523,7 +545,7 @@ FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, EPathT
 	{
 		result.meshInfo.SetNum(mScenePtr->mNumMeshes, false);
 
-		FindMesh(mScenePtr, mScenePtr->mRootNode, result);
+		FindMesh(mScenePtr, mScenePtr->mRootNode, result, tran);
 
 		for ( uint32 i = 0; i < mScenePtr->mNumMeshes; ++i )
 		{
@@ -543,9 +565,9 @@ FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, EPathT
 	return result;
 }
 
-void ULoaderBPFunctionLibrary::LoadMeshToProceduralMesh(UProceduralMeshComponent* target, const FString& filepath, EPathType type)
+void ULoaderBPFunctionLibrary::LoadMeshToProceduralMesh(UProceduralMeshComponent* target, const FString& filepath, EPathType type, const FTransform& tran)
 {
-	FReturnedData &&MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath, type);
+	FReturnedData &&MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath, type, tran);
 	if (MeshInfo.bSuccess)
 	{
 		for ( int i = 0; i < MeshInfo.meshInfo.Num(); i++ )
@@ -571,9 +593,12 @@ void ULoaderBPFunctionLibrary::LoadMeshToProceduralMesh(UProceduralMeshComponent
 	}
 }
 
-UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMesh(UObject* WorldContextObject,  const FString& filepath, EPathType type /* = EPathType::Absolute */ )
+UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMesh( UObject* WorldContextObject, 
+															 const FString& filepath, 
+															 EPathType type /* = EPathType::Absolute */, 
+															 const FTransform& tran )
 {
-	FReturnedData&& MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath, type);
+	FReturnedData&& MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath, type, tran);
 
 	FString NewNameSuggestion = FString(TEXT("ProcMesh"));
 	FString PackageName = FString(TEXT("/Game/Meshes/")) + NewNameSuggestion;
