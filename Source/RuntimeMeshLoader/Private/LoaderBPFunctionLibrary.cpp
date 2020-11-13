@@ -33,7 +33,7 @@ void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,cons
 		TranMat = TranMat.Translation(aiVector3D{ tran.GetLocation().X, tran.GetLocation().Y, tran.GetLocation().Z }, tempMat);
 	}
 
-	if ( !tran.GetScale3D().Equals( FVector{ 0.0f }, 0.01f ) )
+	if ( !tran.GetScale3D().Equals( FVector{ 1.0f }, 0.01f ) )
 	{
 		bTran = true;
 		TranMat = TranMat.Scaling(aiVector3D{ tran.GetScale3D().X, tran.GetScale3D().Y, tran.GetScale3D().Z }, tempMat);
