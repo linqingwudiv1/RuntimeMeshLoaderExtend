@@ -20,7 +20,7 @@
 
 
 
-void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,const FTransform &tran = FTransform())
+void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,const FTransform &tran)
 {
 	//transform...
 	aiMatrix4x4 TranMat,tempMat;
@@ -30,21 +30,21 @@ void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,cons
 	if ( !tran.GetLocation().Equals(FVector{ 0.0f }, 0.01f ) )
 	{
 		bTran = true;
-		TranMat = TranMat.Translation(aiVector3D{ tran.GetLocation().X, tran.GetLocation().Y, tran.GetLocation().Z }, tempMat);
+		TranMat = TranMat * aiMatrix4x4::Translation(aiVector3D{ tran.GetLocation().X, tran.GetLocation().Y, tran.GetLocation().Z }, tempMat);
 	}
 
 	if ( !tran.GetScale3D().Equals( FVector{ 1.0f }, 0.01f ) )
 	{
 		bTran = true;
-		TranMat = TranMat.Scaling(aiVector3D{ tran.GetScale3D().X, tran.GetScale3D().Y, tran.GetScale3D().Z }, tempMat);
+		TranMat = TranMat * aiMatrix4x4::Scaling(aiVector3D{ tran.GetScale3D().X, tran.GetScale3D().Y, tran.GetScale3D().Z }, tempMat);
 	}
 
 	if ( !tran.GetRotation().Equals( FRotator{ 0.0f }.Quaternion(), 0.01f ) )
 	{
 		bTran = true;
-		TranMat = TranMat.RotationX( PI / 180.f * tran.GetRotation().Rotator().Roll	, tempMat  );
-		TranMat = TranMat.RotationY( PI / 180.f * tran.GetRotation().Rotator().Yaw	, tempMat  );
-		TranMat = TranMat.RotationZ( PI / 180.f * tran.GetRotation().Rotator().Pitch	, tempMat  );
+		TranMat = TranMat * aiMatrix4x4::RotationX( PI / 180.f * tran.GetRotation().Rotator().Roll		, tempMat  );
+		TranMat = TranMat * aiMatrix4x4::RotationY( PI / 180.f * tran.GetRotation().Rotator().Yaw		, tempMat  );
+		TranMat = TranMat * aiMatrix4x4::RotationZ( PI / 180.f * tran.GetRotation().Rotator().Pitch	, tempMat  );
 	}
 
 	for (uint32 i = 0; i < node->mNumMeshes; i++)
@@ -167,7 +167,7 @@ void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,cons
 
 void FindMesh(const aiScene* scene, aiNode* node, FReturnedData& retdata, const  FTransform &tran)
 {
-	FindMeshInfo(scene, node, retdata);
+	FindMeshInfo(scene, node, retdata, tran);
 
 	// tree node 
 	for ( uint32 m = 0; m < node->mNumChildren; ++m )
