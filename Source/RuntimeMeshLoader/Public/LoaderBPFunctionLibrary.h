@@ -85,18 +85,19 @@ public:
 	
 	/**  */
 	UFUNCTION( BlueprintCallable, Category="MeshLoader")
-		static FReturnedData LoadMesh(const FString& filepath,EPathType type= EPathType:: Absolute, const FTransform& tran = FTransform());
+		static FReturnedData LoadMesh(const FString& filepath, const FTransform& tran, EPathType type= EPathType:: Absolute );
 
 	/** only static mesh */
 	UFUNCTION(BlueprintCallable, Category="MeshLoader" )
-		static void LoadMeshToProceduralMesh(UProceduralMeshComponent* target, const FString& filepath, EPathType type, const FTransform& tran = FTransform());
+		static void LoadMeshToProceduralMesh(UProceduralMeshComponent* target, const FString& filepath, const FTransform& tran, EPathType type = EPathType::Absolute);
 
 	/**  */
 	UFUNCTION( BlueprintCallable, Category = "MeshLoader", meta = ( HidePin = "WorldContextObject", DefaultToSelf = "WorldContextObject" )  )
 		static UStaticMesh* LoadMeshToStaticMesh( UObject* WorldContextObject, 
 												  const FString& filepath, 
-												  EPathType type = EPathType::Absolute,
-												  const FTransform &tran = FTransform() );
+												  const FTransform& tran,
+												  EPathType type = EPathType::Absolute
+												   );
 	/**  */
 	UFUNCTION( BlueprintCallable, Category = "MeshLoader", meta = ( HidePin = "WorldContextObject",DefaultToSelf = "WorldContextObject" )  )
 		static UStaticMesh* LoadMeshToStaticMeshFromProceduralMesh(UObject* WorldContextObject, UProceduralMeshComponent* ProcMeshComp);

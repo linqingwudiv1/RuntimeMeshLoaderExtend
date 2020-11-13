@@ -503,7 +503,7 @@ FMeshDescription BuildMeshDescriptionExtend( FReturnedData& MeshsData /* UProced
 #pragma endregion copy
 
 
-FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, EPathType type, const FTransform& tran )
+FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, const FTransform& tran, EPathType type )
 {
 	FReturnedData result;
 	result.bSuccess = false;
@@ -565,9 +565,9 @@ FReturnedData ULoaderBPFunctionLibrary::LoadMesh(const FString& filepath, EPathT
 	return result;
 }
 
-void ULoaderBPFunctionLibrary::LoadMeshToProceduralMesh(UProceduralMeshComponent* target, const FString& filepath, EPathType type, const FTransform& tran)
+void ULoaderBPFunctionLibrary::LoadMeshToProceduralMesh(UProceduralMeshComponent* target, const FString& filepath, const FTransform& tran, EPathType type)
 {
-	FReturnedData &&MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath, type, tran);
+	FReturnedData &&MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath,  tran,type );
 	if (MeshInfo.bSuccess)
 	{
 		for ( int i = 0; i < MeshInfo.meshInfo.Num(); i++ )
@@ -595,10 +595,11 @@ void ULoaderBPFunctionLibrary::LoadMeshToProceduralMesh(UProceduralMeshComponent
 
 UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMesh( UObject* WorldContextObject, 
 															 const FString& filepath, 
-															 EPathType type /* = EPathType::Absolute */, 
-															 const FTransform& tran )
+															 const FTransform& tran,
+															 EPathType type /* = EPathType::Absolute */ 
+															  )
 {
-	FReturnedData&& MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath, type, tran);
+	FReturnedData&& MeshInfo = ULoaderBPFunctionLibrary::LoadMesh(filepath,  tran, type);
 
 	FString NewNameSuggestion = FString(TEXT("ProcMesh"));
 	FString PackageName = FString(TEXT("/Game/Meshes/")) + NewNameSuggestion;
