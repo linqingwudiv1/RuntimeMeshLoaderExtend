@@ -628,14 +628,12 @@ UStaticMesh* ULoaderBPFunctionLibrary::LoadMeshToStaticMesh( UObject* WorldConte
 	//// MATERIALS
 	TSet<UMaterialInterface*> UniqueMaterials;
 	
-	// UStaticMeshComponent;
-
 	const int32 NumSections = 1;
 	for (int32 SectionIdx = 0; SectionIdx < NumSections; SectionIdx++)
 	{
 		UMaterialInterface* Material = UMaterial::GetDefaultMaterial(MD_Surface);
 		UniqueMaterials.Add(Material);
-
+		
 	}
 
 	// Copy materials to new mesh

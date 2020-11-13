@@ -58,7 +58,9 @@ struct FReturnedData
 {
 	GENERATED_USTRUCT_BODY()
 
+public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "ReturnedData")
+		/**/
 		bool bSuccess;
 
 	/** Contain Mesh Count  */
