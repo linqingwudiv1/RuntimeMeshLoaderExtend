@@ -112,8 +112,8 @@ public class RuntimeMeshLoader : ModuleRules
 
 			RuntimeDependencies.Add(new RuntimeDependency(dllpath));
 
-            System.Console.WriteLine(@"################################## " + libpath);
-            System.Console.WriteLine(@"################################## " + dllpath);
+            System.Console.WriteLine(@"################## " + libpath);
+            System.Console.WriteLine(@"################## " + dllpath);
         }
         else if(Target.Platform == UnrealTargetPlatform.Mac)
 		{
@@ -137,11 +137,10 @@ public class RuntimeMeshLoader : ModuleRules
 			Directory.CreateDirectory(binariesDir);
 		}
 
-		if (!File.Exists(Path.Combine(binariesDir, filename)))
+		if ( !File.Exists(Path.Combine(binariesDir, filename)) )
 		{
 			// System.Console.WriteLine("___________######################################_______" + Path.Combine(binariesDir, filename) + "``````````````" + Filepath);
 			File.Copy(Filepath, Path.Combine(binariesDir, filename), true);
 		}
     }
-
 }

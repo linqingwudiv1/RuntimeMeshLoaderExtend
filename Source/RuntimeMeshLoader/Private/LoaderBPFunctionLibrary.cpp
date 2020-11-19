@@ -17,15 +17,11 @@
 #include <assimp/scene.h>       // Output data structure
 #include <assimp/postprocess.h> // Post processing flags
 
-
-
-
 void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,const FTransform &tran)
 {
 	//transform...
-	aiMatrix4x4 TranMat,tempMat;
-	
-	
+	aiMatrix4x4 TranMat, tempMat;
+
 	bool bTran = false;
 	if ( !tran.GetLocation().Equals(FVector{ 0.0f }, 0.01f ) )
 	{
