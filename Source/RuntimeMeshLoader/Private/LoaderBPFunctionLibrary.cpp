@@ -40,7 +40,7 @@ void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,cons
 		bTran = true;
 		TranMat = TranMat * aiMatrix4x4::RotationX( PI / 180.f * tran.GetRotation().Rotator().Roll		, tempMat  );
 		TranMat = TranMat * aiMatrix4x4::RotationY( PI / 180.f * tran.GetRotation().Rotator().Yaw		, tempMat  );
-		TranMat = TranMat * aiMatrix4x4::RotationZ( PI / 180.f * tran.GetRotation().Rotator().Pitch	, tempMat  );
+		TranMat = TranMat * aiMatrix4x4::RotationZ( PI / 180.f * tran.GetRotation().Rotator().Pitch		, tempMat  );
 	}
 
 	for (uint32 i = 0; i < node->mNumMeshes; i++)
@@ -100,7 +100,11 @@ void FindMeshInfo(const aiScene* scene, aiNode* node, FReturnedData& result,cons
 					mesh->mNormals[j].y ,
 					mesh->mNormals[j].z  );
 
-				// normal = mi.RelativeTransform.TransformFVector4(normal);
+				if (bTran)
+				{
+					normal = mi.RelativeTransform.TransformFVector4(normal);
+				}
+
 				mi.Normals.Push(normal);
 			}
 			else
